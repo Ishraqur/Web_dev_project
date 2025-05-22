@@ -1,0 +1,118 @@
+<!-- // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Firebase CRUD</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        #currentValue { font-size: 2em; margin-bottom: 20px; color: blue; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Firebase Simple Counter</h1>
+
+    <p>Current Number from Firebase:</p>
+    <div id="currentValue">Loading...</div>
+
+    <button id="incrementButton">Increment Number (+1)</button>
+    <button id="resetButton">Reset Number (to 0)</button>
+    <button id="deleteButton">Delete Number</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Your Firebase configuration object
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdt73Hz81Rd_xZOflOkVRbj2ZCSb59avw",
+            authDomain: "mysimplecrudapp-2708f.firebaseapp.com",
+            projectId: "mysimplecrudapp-2708f",
+            storageBucket: "mysimplecrudapp-2708f.firebasestorage.app",
+            messagingSenderId: "536439499712",
+            appId: "1:536439499712:web:86f90416e38750b9e53625",
+            measurementId: "G-ECL7P4SXMF"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- Our Data Reference ---
+        // We'll store our number in a document called 'counterDoc'
+        // inside a collection called 'myCounter'.
+        const counterRef = db.collection('myCounter').doc('counterDoc');
+
+        // --- DOM Elements ---
+        const currentValueDiv = document.getElementById('currentValue');
+        const incrementButton = document.getElementById('incrementButton');
+        const resetButton = document.getElementById('resetButton');
+        const deleteButton = document.getElementById('deleteButton');
+
+        // --- READ Operation ---
+        // Listen for real-time updates
+        counterRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                currentValueDiv.textContent = data.value !== undefined ? data.value : 'Not set';
+            } else {
+                currentValueDiv.textContent = 'No data yet!';
+            }
+        }, (error) => {
+            console.error("Error reading document: ", error);
+            currentValueDiv.textContent = 'Error loading data.';
+        });
+
+        // --- CREATE / UPDATE Operation (Reset Button) ---
+        resetButton.addEventListener('click', async () => {
+            try {
+                await counterRef.set({ value: 0 }); // Sets or replaces the document
+                console.log("Number reset to 0");
+            } catch (error) {
+                console.error("Error resetting number: ", error);
+            }
+        });
+
+        // --- UPDATE Operation (Increment Button) ---
+        incrementButton.addEventListener('click', async () => {
+            try {
+                // Get current value first (or use a transaction/increment operation)
+                const doc = await counterRef.get();
+                let currentValue = 0;
+                if (doc.exists && doc.data().value !== undefined) {
+                    currentValue = doc.data().value;
+                }
+                await counterRef.set({ value: currentValue + 1 }); // Updates or creates if not exists
+                console.log("Number incremented");
+            } catch (error) {
+                console.error("Error incrementing number: ", error);
+            }
+        });
+
+
+        // --- DELETE Operation ---
+        deleteButton.addEventListener('click', async () => {
+            try {
+                await counterRef.delete();
+                console.log("Number document deleted");
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+
