@@ -23,3 +23,6 @@ The application displays a number retrieved from Firebase and provides buttons t
 ## Key needed:
 
 * To make this work with firebase asynchronously we need the firebase config snippet in our index file directly, which is what I did, without the API credentials it won't sync/work.
+
+## Video included:
+* Screen recording of the functionality is included in the repo root
